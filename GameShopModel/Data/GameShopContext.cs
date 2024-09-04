@@ -5,7 +5,7 @@ namespace GameShopModel.Data;
 
 public class GameShopContext(DbContextOptions<GameShopContext> options) : DbContext(options)
 {
-    DbSet<GameProduct> GameProducts {  get; set; }
-    DbSet<Genre> Genres { get; set; }
-    DbSet<ImageUrl> ImageUrls { get; set; }
+    public DbSet<GameProduct> GameProducts {  get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<ImageUrl> ImageUrls { get; set; }
 }
