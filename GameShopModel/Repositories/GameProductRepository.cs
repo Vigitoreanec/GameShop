@@ -37,8 +37,8 @@ public class GameProductRepository(GameShopContext gameShopContext) : IGameProdu
         editingGameProduct.Description = gameProduct.Description;
         editingGameProduct.Price = gameProduct.Price;
         editingGameProduct.ReleaseDate = gameProduct.ReleaseDate;
-        editingGameProduct.Genre = gameProduct.Genre;
-        editingGameProduct.ImageUrls = gameProduct.ImageUrls;
+        editingGameProduct.Genres = gameProduct.Genres;
+        editingGameProduct.Images = gameProduct.Images;
 
         await gameShopContext.SaveChangesAsync();
     }

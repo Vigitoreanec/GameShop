@@ -1,8 +1,7 @@
 ﻿
-
 namespace GameShopModel.Entities;
 
-public class ImageUrl
+public class Video
 {
     public int Id { get; set; }
     public required string Url { get; set; }

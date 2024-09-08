@@ -10,4 +10,17 @@ public class HomeController(IGameProductRepository gameProductRepository) : Cont
         var gameProducts = await gameProductRepository.GetAllGameProductsAsync();
         return View(gameProducts);
     }
+
+    public IActionResult PopularGames()
+    {
+        return View();
+    }
+    public IActionResult RecommendationGames()
+    {
+        return View();
+    }
+    public IActionResult WishList()
+    {
+        return View();
+    }
 }

@@ -4,6 +4,7 @@ using GameShopModel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameShopModel.Migrations
 {
     [DbContext(typeof(GameShopContext))]
-    partial class GameShopContextModelSnapshot : ModelSnapshot
+    [Migration("20240906143612_Add_SistemRequirement")]
+    partial class Add_SistemRequirement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +30,12 @@ namespace GameShopModel.Migrations
                     b.Property<int>("GameProductsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GenresId")
+                    b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.HasKey("GameProductsId", "GenresId");
+                    b.HasKey("GameProductsId", "GenreId");
 
-                    b.HasIndex("GenresId");
+                    b.HasIndex("GenreId");
 
                     b.ToTable("GameProductGenre");
                 });
@@ -49,18 +52,12 @@ namespace GameShopModel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MinimumSystemRequirementsId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PresentationImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("RecommendedSystemRequirementsId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
@@ -70,10 +67,6 @@ namespace GameShopModel.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MinimumSystemRequirementsId");
-
-                    b.HasIndex("RecommendedSystemRequirementsId");
 
                     b.ToTable("GameProducts");
                 });
@@ -95,7 +88,7 @@ namespace GameShopModel.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("GameShopModel.Entities.Image", b =>
+            modelBuilder.Entity("GameShopModel.Entities.ImageUrl", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,7 +107,7 @@ namespace GameShopModel.Migrations
 
                     b.HasIndex("GameProductId");
 
-                    b.ToTable("Images");
+                    b.ToTable("ImageUrls");
                 });
 
             modelBuilder.Entity("GameShopModel.Entities.MinimumSystemRequirement", b =>
@@ -136,6 +129,9 @@ namespace GameShopModel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GameProductId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Network")
                         .HasColumnType("nvarchar(max)");
 
@@ -160,7 +156,9 @@ namespace GameShopModel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MinimumSystemRequirements");
+                    b.HasIndex("GameProductId");
+
+                    b.ToTable("MinimumSystemRequirement");
                 });
 
             modelBuilder.Entity("GameShopModel.Entities.RecommendedSystemRequirement", b =>
@@ -182,6 +180,9 @@ namespace GameShopModel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GameProductId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Network")
                         .HasColumnType("nvarchar(max)");
 
@@ -206,29 +207,9 @@ namespace GameShopModel.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RecommendedSystemRequirements");
-                });
-
-            modelBuilder.Entity("GameShopModel.Entities.Video", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("GameProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("GameProductId");
 
-                    b.ToTable("Videos");
+                    b.ToTable("RecommendedSystemRequirement");
                 });
 
             modelBuilder.Entity("GameProductGenre", b =>
@@ -241,45 +222,39 @@ namespace GameShopModel.Migrations
 
                     b.HasOne("GameShopModel.Entities.Genre", null)
                         .WithMany()
-                        .HasForeignKey("GenresId")
+                        .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GameShopModel.Entities.ImageUrl", b =>
+                {
+                    b.HasOne("GameShopModel.Entities.GameProduct", null)
+                        .WithMany("ImageUrls")
+                        .HasForeignKey("GameProductId");
+                });
+
+            modelBuilder.Entity("GameShopModel.Entities.MinimumSystemRequirement", b =>
+                {
+                    b.HasOne("GameShopModel.Entities.GameProduct", null)
+                        .WithMany("MinimumSystemRequirements")
+                        .HasForeignKey("GameProductId");
+                });
+
+            modelBuilder.Entity("GameShopModel.Entities.RecommendedSystemRequirement", b =>
+                {
+                    b.HasOne("GameShopModel.Entities.GameProduct", null)
+                        .WithMany("RecommendedSystemRequirements")
+                        .HasForeignKey("GameProductId");
+                });
+
             modelBuilder.Entity("GameShopModel.Entities.GameProduct", b =>
                 {
-                    b.HasOne("GameShopModel.Entities.MinimumSystemRequirement", "MinimumSystemRequirements")
-                        .WithMany()
-                        .HasForeignKey("MinimumSystemRequirementsId");
-
-                    b.HasOne("GameShopModel.Entities.RecommendedSystemRequirement", "RecommendedSystemRequirements")
-                        .WithMany()
-                        .HasForeignKey("RecommendedSystemRequirementsId");
+                    b.Navigation("ImageUrls");
 
                     b.Navigation("MinimumSystemRequirements");
 
                     b.Navigation("RecommendedSystemRequirements");
-                });
-
-            modelBuilder.Entity("GameShopModel.Entities.Image", b =>
-                {
-                    b.HasOne("GameShopModel.Entities.GameProduct", null)
-                        .WithMany("Images")
-                        .HasForeignKey("GameProductId");
-                });
-
-            modelBuilder.Entity("GameShopModel.Entities.Video", b =>
-                {
-                    b.HasOne("GameShopModel.Entities.GameProduct", null)
-                        .WithMany("Videos")
-                        .HasForeignKey("GameProductId");
-                });
-
-            modelBuilder.Entity("GameShopModel.Entities.GameProduct", b =>
-                {
-                    b.Navigation("Images");
-
-                    b.Navigation("Videos");
                 });
 #pragma warning restore 612, 618
         }

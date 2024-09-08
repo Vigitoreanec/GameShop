@@ -1,0 +1,131 @@
+﻿﻿@using GameShopModel.Entities;
+@model GameProduct
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="container py-5">
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                     <div class="carousel-item active">
+                        <video src="@Model.Videos[0].Url" class="d-block w-100" controls />
+                     </div> 
+
+                    @for (int i = 1; i < Model.Videos.Count; i++)
+                    {
+                        <div class="carousel-item">
+                            <video src="@Model.Videos[i].Url" class="d-block w-100" controls></video>
+                        </div>
+                    }
+
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="carousel-item">
+                            <img src="@image.Url" class="d-block w-100" alt="@Model.Title" />
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" style="width: 5%; bottom: 15%;"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" style="width: 5%; bottom: 15%;"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h2 class="fw-bold">@Model.Title</h2>
+            <div class="d-flex justify-content-between">
+                @foreach (var genres in Model.Genres)
+                {
+                    <div class="text-muted">@genres.Title</div>
+                }
+            </div>
+            <h3 class="my-4"><b>Стоимость:</b> @Model.Price ₽</h3>
+            <p class="mb-4">
+                <b>Описание:</b> @Model.Description
+            </p>
+            <div class="d-flex gap-3 mb-4">
+                <a asp-controller="Game" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-success">Добавить в корзину</a>
+            </div>
+            <div>
+                <button class="btn btn-primary" type="button">
+                    Добавить в список желаемого
+                </button>
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid grey; margin-top:3%;">
+        </div>
+        <h5>Системные требования</h5>
+        <div style="border-bottom: 1px solid grey; ">
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th scope="col">Минимальные требования</th>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <th scope="col">Рекомендованные требования</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">ОС:</th>
+                    <td>@Model.MinimumSystemRequirements.OS</td>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                    <td>@Model.RecommendedSystemRequirements.OS</td>
+                    }
+                </tr>
+                <tr>
+                    <th scope="row">Процессор:</th>
+                    <td>@Model.MinimumSystemRequirements.Processor</td>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <td>@Model.RecommendedSystemRequirements.Processor</td>
+                    }
+                </tr>
+                <tr>
+                    <th scope="row">Оперативная память:</th>
+                    <td>@Model.MinimumSystemRequirements.RandomAccessMemory</td>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <td>@Model.RecommendedSystemRequirements.RandomAccessMemory</td>
+                    }
+                </tr>
+                <tr>
+                    <th scope="row">Видеокарта:</th>
+                    <td>@Model.MinimumSystemRequirements.VideoCard</td>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <td>@Model.RecommendedSystemRequirements.VideoCard</td>
+                    }
+                </tr>
+                <tr>
+                    <th scope="row">Место на диске:</th>
+                    <td>@Model.MinimumSystemRequirements.DiskSpace</td>
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <td>@Model.RecommendedSystemRequirements.DiskSpace</td>
+                    }
+                </tr>
+                <tr>
+                    <th scope="row">Сеть</th>
+                @if (Model.MinimumSystemRequirements.Network is not null )
+                {
+                    <td>@Model.MinimumSystemRequirements.Network</td>                    
+                }
+                    @if (Model.RecommendedSystemRequirements is not null)
+                    {
+                        <td>@Model.RecommendedSystemRequirements.Network</td>
+                    }
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>

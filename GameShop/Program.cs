@@ -1,22 +1,29 @@
-using GameShopModel.Data;
-using GameShopModel.Repositories;
-using GameShopModel.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
+using GameShop;
 
-var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<IGameProductRepository, GameProductRepository>();
+CreateHostBuilder(args).Build().Run();
+static IHostBuilder CreateHostBuilder(string[] args) =>
+    Host.CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder =>
+    {
+        webBuilder.UseStartup<Startap>();
+    });
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<GameShopContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GameShopContext") ??
-    throw new InvalidOperationException("Connection string 'GameShopContext' not found.")));
+//var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+//builder.Services.AddTransient<IGameProductRepository, GameProductRepository>();
+//builder.Services.AddSingleton<IRepositoryCart, RepositoryCart>();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+//builder.Services.AddControllersWithViews();
+//builder.Services.AddDbContext<GameShopContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("GameShopContext") ??
+//    throw new InvalidOperationException("Connection string 'GameShopContext' not found.")));
 
-app.Run();
+//var app = builder.Build();
+
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//app.Run();
 

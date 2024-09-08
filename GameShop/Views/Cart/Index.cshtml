@@ -1,0 +1,29 @@
+﻿@using GameShop.Extensions
+@using GameShopModel.Entities
+@model IEnumerable<GameProduct>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@foreach (var gameProduct in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <div class="d-flex flex-row align-items-center">
+                <div>
+                    <img src="@gameProduct.PresentationImageUrl"
+                         class="img-fluid rounded-3" alt="@gameProduct.Title" style="width: 265px;">
+                </div>
+                <div class="ms-3">
+                    <h5>@gameProduct.Title</h5>
+                    <p class="small mb-0">@gameProduct.Description.Truncate(160)...</p>
+                </div>
+            </div>
+            <div class="d-flex flex-row align-items-center">
+                <div style="width: 90px;">
+                    <h5 class="mb-0">@gameProduct.Price р</h5>
+                </div>
+                <a asp-controller="Cart" asp-action="Delete" asp-route-id="@gameProduct.Id" type="button" class="btn btn-danger">Удалить</a>
+            </div>
+        </div>
+        </div>
+        </div>
+    }
