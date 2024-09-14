@@ -14,4 +14,5 @@ public class GameProduct
     public required List<Video> Videos { get; set; }
     public required MinimumSystemRequirement? MinimumSystemRequirements { get; set; }
     public required RecommendedSystemRequirement? RecommendedSystemRequirements { get; set; }
+    public required List<Cart> Carts { get; set; }
 }

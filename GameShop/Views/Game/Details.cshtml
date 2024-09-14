@@ -1,6 +1,6 @@
-﻿﻿@using GameShopModel.Entities;
-@model GameProduct
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using GameShop.ViewModel;
+@model WishGameProduct
 <div class="container py-5">
 
     <div class="row">
@@ -8,20 +8,20 @@
             <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                      <div class="carousel-item active">
-                        <video src="@Model.Videos[0].Url" class="d-block w-100" controls />
+                        <video src="@Model.GameProduct.Videos[0].Url" class="d-block w-100" controls />
                      </div> 
 
-                    @for (int i = 1; i < Model.Videos.Count; i++)
+                    @for (int i = 1; i < Model.GameProduct.Videos.Count; i++)
                     {
                         <div class="carousel-item">
-                            <video src="@Model.Videos[i].Url" class="d-block w-100" controls></video>
+                            <video src="@Model.GameProduct.Videos[i].Url" class="d-block w-100" controls></video>
                         </div>
                     }
 
-                    @foreach (var image in Model.Images)
+                    @foreach (var image in Model.GameProduct.Images)
                     {
                         <div class="carousel-item">
-                            <img src="@image.Url" class="d-block w-100" alt="@Model.Title" />
+                            <img src="@image.Url" class="d-block w-100" alt="@Model.GameProduct.Title" />
                         </div>
                     }
                 </div>
@@ -36,25 +36,45 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <h2 class="fw-bold">@Model.Title</h2>
+            <h2 class="fw-bold">@Model.GameProduct.Title</h2>
             <div class="d-flex justify-content-between">
-                @foreach (var genres in Model.Genres)
+                @foreach (var genres in Model.GameProduct.Genres)
                 {
                     <div class="text-muted">@genres.Title</div>
                 }
             </div>
-            <h3 class="my-4"><b>Стоимость:</b> @Model.Price ₽</h3>
+            <h3 class="my-4"><b>Стоимость:</b> @Model.GameProduct.Price ₽</h3>
             <p class="mb-4">
-                <b>Описание:</b> @Model.Description
+                <b>Описание:</b> @Model.GameProduct.Description
             </p>
             <div class="d-flex gap-3 mb-4">
-                <a asp-controller="Game" asp-action="Add" asp-route-id="@Model.Id" class="btn btn-success">Добавить в корзину</a>
+                @if (!Model.ContainsGameProduct)
+                {
+                    <a asp-controller="Game" asp-action="Add" asp-route-id="@Model.GameProduct.Id" class="btn btn-success">Добавить в корзину</a>
+                }
+                else
+                {
+                    <a class="btn btn-secondary">Игра уже Куплена</a>
+                }
             </div>
-            <div>
-                <button class="btn btn-primary" type="button">
+
+            @if (!Model.ContainsWishGameProduct)
+            {
+                <div>
+                    <a asp-controller="Game" asp-action="AddWishList" asp-route-id="@Model.GameProduct.Id" class="btn btn-primary" type="button">
                     Добавить в список желаемого
-                </button>
-            </div>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <a asp-controller="Game" asp-action="DeleteWishList" asp-route-id="@Model.GameProduct.Id" class="btn btn-danger" type="button">
+                        Удалить из списка желаемого
+                    </a>
+                </div>
+            }
+
         </div>
         <div style="border-bottom: 1px solid grey; margin-top:3%;">
         </div>
@@ -66,7 +86,7 @@
                 <tr>
                     <th></th>
                     <th scope="col">Минимальные требования</th>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
                         <th scope="col">Рекомендованные требования</th>
                     }
@@ -75,53 +95,53 @@
             <tbody>
                 <tr>
                     <th scope="row">ОС:</th>
-                    <td>@Model.MinimumSystemRequirements.OS</td>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    <td>@Model.GameProduct.MinimumSystemRequirements.OS</td>
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                    <td>@Model.RecommendedSystemRequirements.OS</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.OS</td>
                     }
                 </tr>
                 <tr>
                     <th scope="row">Процессор:</th>
-                    <td>@Model.MinimumSystemRequirements.Processor</td>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    <td>@Model.GameProduct.MinimumSystemRequirements.Processor</td>
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                        <td>@Model.RecommendedSystemRequirements.Processor</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.Processor</td>
                     }
                 </tr>
                 <tr>
                     <th scope="row">Оперативная память:</th>
-                    <td>@Model.MinimumSystemRequirements.RandomAccessMemory</td>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    <td>@Model.GameProduct.MinimumSystemRequirements.RandomAccessMemory</td>
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                        <td>@Model.RecommendedSystemRequirements.RandomAccessMemory</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.RandomAccessMemory</td>
                     }
                 </tr>
                 <tr>
                     <th scope="row">Видеокарта:</th>
-                    <td>@Model.MinimumSystemRequirements.VideoCard</td>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    <td>@Model.GameProduct.MinimumSystemRequirements.VideoCard</td>
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                        <td>@Model.RecommendedSystemRequirements.VideoCard</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.VideoCard</td>
                     }
                 </tr>
                 <tr>
                     <th scope="row">Место на диске:</th>
-                    <td>@Model.MinimumSystemRequirements.DiskSpace</td>
-                    @if (Model.RecommendedSystemRequirements is not null)
+                    <td>@Model.GameProduct.MinimumSystemRequirements.DiskSpace</td>
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                        <td>@Model.RecommendedSystemRequirements.DiskSpace</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.DiskSpace</td>
                     }
                 </tr>
                 <tr>
                     <th scope="row">Сеть</th>
-                @if (Model.MinimumSystemRequirements.Network is not null )
+                    @if (Model.GameProduct.MinimumSystemRequirements.Network is not null)
                 {
-                    <td>@Model.MinimumSystemRequirements.Network</td>                    
-                }
-                    @if (Model.RecommendedSystemRequirements is not null)
+                        <td>@Model.GameProduct.MinimumSystemRequirements.Network</td>
+                    }
+                    @if (Model.GameProduct.RecommendedSystemRequirements is not null)
                     {
-                        <td>@Model.RecommendedSystemRequirements.Network</td>
+                        <td>@Model.GameProduct.RecommendedSystemRequirements.Network</td>
                     }
                 </tr>
 

@@ -4,6 +4,9 @@ using GameShopModel.Repositories;
 using Microsoft.EntityFrameworkCore;
 using GameShop.Repository.Interfaces;
 using GameShop.Repository;
+using Microsoft.AspNetCore.Identity;
+using GameShopModel.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace GameShop;
 
@@ -17,10 +20,20 @@ public class Startap(IConfiguration configuration)
         services.AddDbContext<GameShopContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("GameShopContext") ??
             throw new InvalidOperationException("Connection string 'GameShopContext' not found.")));
+
+        services.AddIdentity<User,IdentityRole>()
+            .AddEntityFrameworkStores<GameShopContext>();
+
+        services.AddMemoryCache();
+        services.AddSession();
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
     }
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

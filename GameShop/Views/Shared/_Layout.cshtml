@@ -34,10 +34,19 @@
                     </li>
                                        
                 </ul>
-                <div class="button login" style="position: absolute; right: 150px;">
-                    <a class="btn btn-secondary" type="button" asp-controller="Account" asp-action="Login">Войти</a>
-                    <a class="btn btn-secondary" type="button" asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
-                </div>
+                @if(!User.Identity.IsAuthenticated)
+                {
+                   <div class="button login" style="position: absolute; right: 150px;">
+                        <a class="btn btn-secondary" type="button" asp-controller="Account" asp-action="Login">Войти</a>
+                        <a class="btn btn-secondary" type="button" asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
+                    </div> 
+                }
+                @if(User.Identity.IsAuthenticated)
+                {
+                    <div class="button login" style="position: absolute; right: 150px;">
+                        <a class="btn btn-secondary" type="button" asp-controller="Account" asp-action="Logout">Выход</a>
+                   </div>
+                }
                 <div class="d-flex">
                     <a asp-controller="Cart" asp-action="Index" class="btn btn-success">Корзина</a>
                 </div>

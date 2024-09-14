@@ -3,15 +3,16 @@
 @using GameShopModel.Entities; 
 
 @model List<GameProduct>
-
+<div class="container mt-2">
+    <div class="row row-cols-4">
 @foreach(var gameProduct in Model)
 {
     <div class="card" style="width: 18rem; margin: 10px 10px; --bs-card-spacer-y: 0.3rem; cursor: pointer;
             --bs-card-spacer-x: 1rem;">
         <a asp-controller="Game" asp-action="Details" asp-route-id="@gameProduct.Id" style="text-decoration: inherit; color: inherit">
-        <img class="card-img-top" src="@gameProduct.PresentationImageUrl" alt="Card image" style="width: 286px; height: 190px">
+        <img class="card-img-top" src="@gameProduct.PresentationImageUrl" alt="Card image" style="max-width: 262px; ">
             <div class="card-body">
-            <h5 class="card-title"><b>Название: </b>@gameProduct.Title</h5>
+            <h5 class="card-title"> @gameProduct.Title</h5>
             <p class="card-text"><b>Описание: </b>@gameProduct.Description.Truncate(160)</p>
             <p class="card-text"><b>Время Начала: </b>@gameProduct.ReleaseDate</p>
             <p class="card-text"><b>Стоимость:</b> @gameProduct.Price &#8381;</p>
@@ -43,3 +44,5 @@
     </a>
     </div>
 }
+</div>
+</div>
