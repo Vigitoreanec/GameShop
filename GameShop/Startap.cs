@@ -15,7 +15,9 @@ public class Startap(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient<IGameProductRepository, GameProductRepository>();
+        services.AddTransient<IRepositoryWishList, RepositoryWishList>();
         services.AddSingleton<IRepositoryCart, RepositoryCart>();
+
         services.AddControllersWithViews();
         services.AddDbContext<GameShopContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("GameShopContext") ??

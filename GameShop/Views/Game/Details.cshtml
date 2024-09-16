@@ -1,6 +1,6 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 ﻿@using GameShop.ViewModel;
-@model WishGameProduct
+@model WishGameProductViewModel
 <div class="container py-5">
 
     <div class="row">
@@ -38,9 +38,9 @@
         <div class="col-lg-6">
             <h2 class="fw-bold">@Model.GameProduct.Title</h2>
             <div class="d-flex justify-content-between">
-                @foreach (var genres in Model.GameProduct.Genres)
+                @foreach (var genre in Model.GameProduct.Genres)
                 {
-                    <div class="text-muted">@genres.Title</div>
+                    <div class="text-muted">@genre.Title</div>
                 }
             </div>
             <h3 class="my-4"><b>Стоимость:</b> @Model.GameProduct.Price ₽</h3>

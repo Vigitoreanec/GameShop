@@ -2,7 +2,7 @@
 
 namespace GameShop.ViewModel;
 
-public class WishGameProduct
+public class WishGameProductViewModel
 {
     public required GameProduct GameProduct { get; set; }
     public bool ContainsWishGameProduct { get; set; }

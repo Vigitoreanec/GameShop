@@ -1,1 +1,55 @@
-﻿﻿<h1>Популярные игры</h1>
+﻿@using GameShop.Extensions
+@using GameShopModel.Entities
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@model Dictionary<int,GameProduct>
+<div class="container mt-2">
+        <h2>Популярные Игры</h2>
+    <div class="row row-cols-4">
+        @* <form asp-controller="Home" asp-action="Index">
+            <p>
+                Название Игры: <input type="text" name="SearchString"/>
+                <input type="submit" value="Поиск"/>
+            </p>
+        </form> *@
+        @foreach (var gameProduct in Model)
+        {
+            <div class="card" style="width: 18rem; margin: 10px 10px; --bs-card-spacer-y: 0.3rem; cursor: pointer;
+            --bs-card-spacer-x: 1rem;">
+                <a asp-controller="Game" asp-action="Details" asp-route-id="@gameProduct.Key" style="text-decoration: inherit; color: inherit">
+                    <img class="card-img-top" src="@gameProduct.Value.PresentationImageUrl" alt="Card image" style="max-width: 262px; ">
+                    <div class="card-body">
+                        <h5 class="card-title"> @gameProduct.Value.Title</h5>
+                        <p class="card-text"><b>Описание: </b>@gameProduct.Value.Description.Truncate(160)</p>
+                        <p class="card-text"><b>Время Начала: </b>@gameProduct.Value.ReleaseDate</p>
+                        <p class="card-text"><b>Стоимость:</b> @gameProduct.Value.Price &#8381;</p>
+                        <div class="d-flex justify-content-between" style="flex-direction:column;">
+                            <a asp-controller="Game" asp-action="Details" asp-route-id="@gameProduct.Key" class="btn btn-primary" style="
+                    position: relative;
+                    margin: 10px auto;
+                    text-align: center;">
+                                Купить
+                            </a>
+                            @* @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                        {
+                        <a class="btn btn-primary" asp-page="./Delete" asp-route-id="@service.Movie.Id" style="
+                        position: relative;
+                        margin: 10px auto;
+                        text-align: center;">
+                        Удалить
+                        </a>
+                        } *@
+                            @* <a asp-page="./Edit" asp-route-id="@service.Movie.Id" class="btn btn-primary" style="
+                        position: relative;
+                        margin: 10px auto;
+                        text-align: center;">
+                        Редактировать Услугу
+                        </a> *@
+
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

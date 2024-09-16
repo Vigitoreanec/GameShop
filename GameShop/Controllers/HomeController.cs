@@ -1,4 +1,5 @@
-﻿using GameShop.Repository;
+﻿using GameShop.Extensions;
+using GameShop.Repository;
 using GameShopModel.Data;
 using GameShopModel.Entities;
 using GameShopModel.Repositories.Interface;
@@ -10,17 +11,54 @@ namespace GameShop.Controllers;
 
 public class HomeController(GameShopContext gameShopContext, IGameProductRepository gameProductRepository, IHttpContextAccessor httpContextAccessor) : Controller
 {
+    private const int countPopularGames = 100;
     public async Task <IActionResult> Index()
     {
         var gameProducts = await gameProductRepository.GetAllGameProductsAsync();
         return View(gameProducts);
     }
+    //public async Task<IActionResult> Index(string searchString)
+    //{
+    //    var gameProducts = await gameProductRepository.GetAllGameProductsAsync();
+    //    gameProducts.Where(gameProduct => 
+    //    gameProduct.Title.ToUpper()
+    //                .Contains(searchString.ToUpper()))
+    //                .ToList();
 
-    public IActionResult PopularGames()
+    //    return View(gameProducts);
+    //}
+    public async Task<IActionResult> PopularGames()
     {
-        return View();
+        var carrentDate = DateTime.UtcNow;
+        var monthAgo = new DateTime(carrentDate.Year, carrentDate.Month - 1, carrentDate.Day);
+
+        var games = await gameShopContext.Carts
+            .Include(cart => cart.GameProducts)
+            .Between(cart => cart.DatePurchese, monthAgo, carrentDate)
+            .ToListAsync();
+
+        var dictionary = new Dictionary<int, GameProduct>();
+
+        foreach (var cart in games)
+        {
+            if (dictionary.Count > countPopularGames)
+            {
+                break;
+            }
+
+            foreach (var product in cart.GameProducts)
+            {
+                if (dictionary.ContainsKey(product.Id))
+                {
+                    continue;
+                }
+                dictionary.Add(product.Id, product);
+            }
+        }
+
+        return View(dictionary);
     }
-    public IActionResult RecommendationGames()
+    public IActionResult RecommendationGames() // Эксперты
     {
         return View();
     }
