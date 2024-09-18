@@ -7,22 +7,57 @@
         <div class="col-lg-6">
             <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                     <div class="carousel-item active">
-                        <video src="@Model.GameProduct.Videos[0].Url" class="d-block w-100" controls />
-                     </div> 
-
-                    @for (int i = 1; i < Model.GameProduct.Videos.Count; i++)
+                    @if(Model.GameProduct.Videos.Count>0)
                     {
-                        <div class="carousel-item">
-                            <video src="@Model.GameProduct.Videos[i].Url" class="d-block w-100" controls></video>
+                        <div class="carousel-item active">
+                            <video src="@Model.GameProduct.Videos[0].Url" class="d-block w-100" controls />
                         </div>
                     }
-
-                    @foreach (var image in Model.GameProduct.Images)
+                    else if (Model.GameProduct.Images.Count > 0)
                     {
-                        <div class="carousel-item">
-                            <img src="@image.Url" class="d-block w-100" alt="@Model.GameProduct.Title" />
+                        <div class="carousel-item active">
+                            <img src="@Model.GameProduct.Images[0].Url" class="d-block w-100" alt="@Model.GameProduct.Title" />
                         </div>
+                    }
+                    @if (Model.GameProduct.Videos.Count > 0 && Model.GameProduct.Images.Count > 0)
+                    {
+                        @for (int i = 1; i < Model.GameProduct.Videos.Count; i++)
+                        {
+                            <div class="carousel-item">
+                                <video src="@Model.GameProduct.Videos[i].Url" class="d-block w-100" controls></video>
+                            </div>
+                        }
+
+                        @foreach (var image in Model.GameProduct.Images)
+                        {
+                            <div class="carousel-item">
+                                <img src="@image.Url" class="d-block w-100" alt="@Model.GameProduct.Title" />
+                            </div>
+                        }
+                    }
+                    else if (Model.GameProduct.Videos.Count == 0 && Model.GameProduct.Images.Count > 0)
+                    {
+                        @for (int i = 1; i < Model.GameProduct.Images.Count; i++)
+                        {
+                            <div class="carousel-item">
+                                <img src="@Model.GameProduct.Images[i].Url" class="d-block w-100" alt="@Model.GameProduct.Title"/>
+                            </div>
+                        }
+                    }
+                    else if (Model.GameProduct.Videos.Count > 0 && Model.GameProduct.Images.Count == 0)
+                    {
+                        @for (int i = 1; i < Model.GameProduct.Videos.Count; i++)
+                        {
+                            <div class="carousel-item">
+                                <video src="@Model.GameProduct.Videos[i].Url" class="d-block w-100" controls></video>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <img src="/Image/No_Image_Available.jpg" class="d-block w-100" alt="нет контента" />
+                        </div>                        
                     }
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" style="width: 5%; bottom: 15%;"

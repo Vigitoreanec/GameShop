@@ -1,13 +1,34 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@using GameShop.Extensions
+@using GameShop.Extensions;
 @using GameShopModel.Entities; 
+@using GameShop.ViewModel;
 
-@model List<GameProduct>
+@model FilteredGameProductViewModel
+
 <div class="container mt-2">
+    <form asp-controller="Home" asp-action="Index" method="get">
+        Жанр: 
+        <select asp-for="GameGenre" asp-items="Model.GameGenres">
+            <option value="Все">All</option>
+        </select>
+        Фильтр:
+        <select asp-for="SelectFilter">
+            @* asp-items="Model.Filter" >*@
+            <option value="Все">Все</option>
+            <option value="Ask">По возрастанию</option>
+            <option value="Desk">По Убыванию</option>
+        </select>
+        Название: 
+        <input type="text" asp-for="NameSearchString" />
+        <input type="submit" value="Поиск" />
+    </form>
+
+    <h2>Игры: </h2>
     <div class="row row-cols-4">
-@foreach(var gameProduct in Model)
-{
-    <div class="card" style="width: 18rem; margin: 10px 10px; --bs-card-spacer-y: 0.3rem; cursor: pointer;
+
+    @foreach(var gameProduct in Model.GameProducts)
+    {
+        <div class="card" style="width: 18rem; margin: 10px 10px; --bs-card-spacer-y: 0.3rem; cursor: pointer;
             --bs-card-spacer-x: 1rem;">
         <a asp-controller="Game" asp-action="Details" asp-route-id="@gameProduct.Id" style="text-decoration: inherit; color: inherit">
         <img class="card-img-top" src="@gameProduct.PresentationImageUrl" alt="Card image" style="max-width: 262px; ">
@@ -41,8 +62,8 @@
                     
                 </div>
             </div>
-    </a>
-    </div>
-}
+        </a>
+        </div>
+    }
 </div>
 </div>

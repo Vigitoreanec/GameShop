@@ -20,4 +20,8 @@
     <ProjectReference Include="..\GameShopModel\GameShopModel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Image\" />
+  </ItemGroup>
+
 </Project>

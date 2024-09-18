@@ -1,60 +1,83 @@
 ﻿using GameShop.Extensions;
 using GameShop.Repository;
+using GameShop.ViewModel;
 using GameShopModel.Data;
 using GameShopModel.Entities;
 using GameShopModel.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace GameShop.Controllers;
-
-public class HomeController(GameShopContext gameShopContext, IGameProductRepository gameProductRepository, IHttpContextAccessor httpContextAccessor) : Controller
+public enum Filter
+{
+    Ask,
+    Desk
+}
+public class HomeController(
+    GameShopContext gameShopContext, 
+    IGameProductRepository gameProductRepository, 
+    IHttpContextAccessor httpContextAccessor) : Controller
 {
     private const int countPopularGames = 100;
-    public async Task <IActionResult> Index()
+    private const int minValueMonth = -1;
+    
+    
+    public async Task<IActionResult> Index(Filter? selectFilter, string gameGenre, string nameSearchString)
     {
-        var gameProducts = await gameProductRepository.GetAllGameProductsAsync();
-        return View(gameProducts);
-    }
-    //public async Task<IActionResult> Index(string searchString)
-    //{
-    //    var gameProducts = await gameProductRepository.GetAllGameProductsAsync();
-    //    gameProducts.Where(gameProduct => 
-    //    gameProduct.Title.ToUpper()
-    //                .Contains(searchString.ToUpper()))
-    //                .ToList();
+        var gameGenres = from g in gameShopContext.Genres
+                         select g;
 
-    //    return View(gameProducts);
-    //}
-    public async Task<IActionResult> PopularGames()
-    {
-        var carrentDate = DateTime.UtcNow;
-        var monthAgo = new DateTime(carrentDate.Year, carrentDate.Month - 1, carrentDate.Day);
+        var gameProducts = from g in gameShopContext.GameProducts
+                           select g;
 
-        var games = await gameShopContext.Carts
-            .Include(cart => cart.GameProducts)
-            .Between(cart => cart.DatePurchese, monthAgo, carrentDate)
-            .ToListAsync();
-
-        var dictionary = new Dictionary<int, GameProduct>();
-
-        foreach (var cart in games)
+        if(!string.IsNullOrEmpty(nameSearchString) )
         {
-            if (dictionary.Count > countPopularGames)
+            gameProducts = gameProducts.Where(
+                gameProduct => gameProduct.Title.ToUpper().Contains(nameSearchString));
+        }
+        if (selectFilter is not null)
+        {
+            if (selectFilter == Filter.Ask)
             {
-                break;
+                gameProducts = gameProducts.OrderBy(gameProduct => gameProduct.Title);
             }
-
-            foreach (var product in cart.GameProducts)
+            else
             {
-                if (dictionary.ContainsKey(product.Id))
-                {
-                    continue;
-                }
-                dictionary.Add(product.Id, product);
+                gameProducts = gameProducts.OrderByDescending(gameProduct => gameProduct.Title);
             }
         }
+        if (!string.IsNullOrEmpty(gameGenre))
+        {
+            gameProducts = gameProducts.Include(gameProduct => gameProduct.Genres)
+                .Where(gameProduct => 
+                                gameProduct.Genres.Where(genre => 
+                                                    genre.Title.Contains(gameGenre)).Any());
+        }
+
+        var filtered = new FilteredGameProductViewModel
+        {
+            //Filter = new SelectList(new List<Filter> { Filter.Ask, Filter.Desk}),
+            GameGenres = new SelectList(await gameGenres.Select(genre => genre.Title).ToListAsync()),
+            GameProducts = await gameProducts.ToListAsync()
+        };
+
+        return View(filtered);
+    }
+    public async Task<IActionResult> PopularGames()
+    {
+        var carts = await gameShopContext.Carts
+            .Include(cart => cart.GameProducts)
+            .Where(cart => 
+            cart.DatePurchese >= DateTime.UtcNow.Date.AddMonths(minValueMonth) &&
+            cart.DatePurchese <= DateTime.UtcNow.Date)
+            .ToListAsync();
+
+        var dictionary = carts.SelectMany(cart => cart.GameProducts)
+            .GroupBy(gameProduct => gameProduct.Id)
+            .Take(countPopularGames)
+            .ToDictionary( group => group.Key, group => group.First());
 
         return View(dictionary);
     }

@@ -7,7 +7,10 @@ using System.Security.Claims;
 
 namespace GameShop.Controllers;
 
-public class CartController(GameShopContext gameShopContext, IRepositoryCart repositoryCart, IHttpContextAccessor httpContextAccessor) : Controller
+public class CartController(
+    GameShopContext gameShopContext, 
+    IRepositoryCart repositoryCart, 
+    IHttpContextAccessor httpContextAccessor) : Controller
 {
     public IActionResult Index()
     {
