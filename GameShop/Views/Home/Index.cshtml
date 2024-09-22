@@ -3,23 +3,56 @@
 @using GameShopModel.Entities; 
 @using GameShop.ViewModel;
 
-@model FilteredGameProductViewModel
+@model GameProductsViewModel
+<style>
+    @@font-face{
+        font-family: 'FontAwesome';
+        src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+
+
+    .glyphicon{
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+        .glyphicon-chevron-right::before {
+        content: "\f054";
+    }
+
+    .glyphicon-chevron-left::before {
+        content: "\f053";
+    }
+</style>
 
 <div class="container mt-2">
     <form asp-controller="Home" asp-action="Index" method="get">
         Жанр: 
-        <select asp-for="GameGenre" asp-items="Model.GameGenres">
-            <option value="Все">All</option>
+        <select 
+            name="selectedGenreGameProduct" 
+            asp-for="FilteredGameProductVM.SelectedGenreGameProduct" 
+            value="FilteredGameProductVM.SelectedGenreGameProduct" 
+            asp-items="Model.FilteredGameProductVM.Genres">
+            <option value="">Все</option>
         </select>
-        Фильтр:
-        <select asp-for="SelectFilter">
-            @* asp-items="Model.Filter" >*@
-            <option value="Все">Все</option>
-            <option value="Ask">По возрастанию</option>
-            <option value="Desk">По Убыванию</option>
+        Фильтрация:
+        <select
+            name = "sortGameProductState"
+            asp-for="SortGameProductVM.SortTitleGameProduct">
+            <option value="">Все</option>
+            <option value="TitleAsk">По возрастанию</option>
+            <option value="TitleDesk">По Убыванию</option>
         </select>
         Название: 
-        <input type="text" asp-for="NameSearchString" />
+        <input name="selectedTitleGameProduct" value="@Model.FilteredGameProductVM.SelectedTitleGameProduct" type="text" />
         <input type="submit" value="Поиск" />
     </form>
 
@@ -66,4 +99,29 @@
         </div>
     }
 </div>
+
+@if (Model.GameProducts.HasPreviousPage)
+{
+    <a asp-action="Index"
+           asp-route-page="@(Model.GameProducts.PageIndex - 1)"
+       asp-route-sortGameProductState="@(Model.SortGameProductVM.SortTitleGameProduct)"
+       asp-route-selectedGenreGameProduct="@(Model.FilteredGameProductVM.SelectedGenreGameProduct)"
+       asp-route-selectedTitleGameProduct="@(Model.FilteredGameProductVM.SelectedTitleGameProduct)"
+        class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.GameProducts.HasNextPage)
+{
+    <a asp-action="Index"
+           asp-route-page="@(Model.GameProducts.PageIndex + 1)"
+       asp-route-sortGameProductState="@(Model.SortGameProductVM.SortTitleGameProduct)"
+       asp-route-selectedGenreGameProduct="@(Model.FilteredGameProductVM.SelectedGenreGameProduct)"
+       asp-route-selectedTitleGameProduct="@(Model.FilteredGameProductVM.SelectedTitleGameProduct)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
 </div>

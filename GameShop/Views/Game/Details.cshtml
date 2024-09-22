@@ -73,10 +73,14 @@
         <div class="col-lg-6">
             <h2 class="fw-bold">@Model.GameProduct.Title</h2>
             <div class="d-flex justify-content-between">
-                @foreach (var genre in Model.GameProduct.Genres)
-                {
-                    <div class="text-muted">@genre.Title</div>
-                }
+                
+                <ul>
+                    <h3>Категории: </h3>
+                    @foreach (var genres in Model.GameProduct.Genres)
+                    {
+                        <li>@genres.Title</li>
+                    }
+                </ul>
             </div>
             <h3 class="my-4"><b>Стоимость:</b> @Model.GameProduct.Price ₽</h3>
             <p class="mb-4">

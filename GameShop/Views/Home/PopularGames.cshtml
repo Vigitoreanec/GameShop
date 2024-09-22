@@ -6,12 +6,12 @@
 <div class="container mt-2">
         <h2>Популярные Игры</h2>
     <div class="row row-cols-4">
-        @* <form asp-controller="Home" asp-action="Index">
+        <form asp-controller="Home" asp-action="PopularGames" method="get">
             <p>
-                Название Игры: <input type="text" name="SearchString"/>
+                Название Игры: <input type="text" name="searchTitle" />
                 <input type="submit" value="Поиск"/>
             </p>
-        </form> *@
+        </form>
         @foreach (var gameProduct in Model)
         {
             <div class="card" style="width: 18rem; margin: 10px 10px; --bs-card-spacer-y: 0.3rem; cursor: pointer;

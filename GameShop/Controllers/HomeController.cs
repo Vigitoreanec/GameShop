@@ -1,4 +1,5 @@
-﻿using GameShop.Extensions;
+﻿using GameShop.Core;
+using GameShop.Extensions;
 using GameShop.Repository;
 using GameShop.ViewModel;
 using GameShopModel.Data;
@@ -7,14 +8,12 @@ using GameShopModel.Repositories.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 using System.Security.Claims;
 
 namespace GameShop.Controllers;
-public enum Filter
-{
-    Ask,
-    Desk
-}
+
 public class HomeController(
     GameShopContext gameShopContext, 
     IGameProductRepository gameProductRepository, 
@@ -22,50 +21,55 @@ public class HomeController(
 {
     private const int countPopularGames = 100;
     private const int minValueMonth = -1;
-    
-    
-    public async Task<IActionResult> Index(Filter? selectFilter, string gameGenre, string nameSearchString)
+    private const int pageSize = 4;
+
+    public async Task<IActionResult> Index(
+        //Filter? selectFilter, 
+        string selectedGenreGameProduct, 
+        string selectedTitleGameProduct,
+        SortGameProductState? sortGameProductState,
+        int page = 1
+        )
     {
         var gameGenres = from g in gameShopContext.Genres
-                         select g;
+                         select g.Title;
 
         var gameProducts = from g in gameShopContext.GameProducts
                            select g;
 
-        if(!string.IsNullOrEmpty(nameSearchString) )
+        if(!string.IsNullOrEmpty(selectedTitleGameProduct) )
         {
-            gameProducts = gameProducts.Where(
-                gameProduct => gameProduct.Title.ToUpper().Contains(nameSearchString));
+            gameProducts = gameProducts
+                .Where(gameProduct => gameProduct.Title.ToUpper()
+                .Contains(selectedTitleGameProduct));
         }
-        if (selectFilter is not null)
+        
+        if (!string.IsNullOrEmpty(selectedGenreGameProduct))
         {
-            if (selectFilter == Filter.Ask)
-            {
-                gameProducts = gameProducts.OrderBy(gameProduct => gameProduct.Title);
-            }
-            else
-            {
-                gameProducts = gameProducts.OrderByDescending(gameProduct => gameProduct.Title);
-            }
-        }
-        if (!string.IsNullOrEmpty(gameGenre))
-        {
-            gameProducts = gameProducts.Include(gameProduct => gameProduct.Genres)
-                .Where(gameProduct => 
-                                gameProduct.Genres.Where(genre => 
-                                                    genre.Title.Contains(gameGenre)).Any());
+            gameProducts = gameProducts
+                .Include(gameProduct => gameProduct.Genres)
+                .Where(gameProduct => gameProduct.Genres
+                .Any(genre => genre.Title.Contains(selectedGenreGameProduct)));
         }
 
-        var filtered = new FilteredGameProductViewModel
+        gameProducts = sortGameProductState switch
         {
-            //Filter = new SelectList(new List<Filter> { Filter.Ask, Filter.Desk}),
-            GameGenres = new SelectList(await gameGenres.Select(genre => genre.Title).ToListAsync()),
-            GameProducts = await gameProducts.ToListAsync()
+            SortGameProductState.TitleAsk => gameProducts = gameProducts.OrderBy(gameProduct => gameProduct.Title),
+            SortGameProductState.TitleDesk => gameProducts = gameProducts.OrderByDescending(gameProduct => gameProduct.Title),
+            _ => gameProducts
         };
 
-        return View(filtered);
+        var gameproductsVM = new GameProductsViewModel
+        {
+            GameProducts = await PaginationList<GameProduct>.CreateAsync(gameProducts, page, pageSize),
+            //PageViewModel = new(count, page, pageSize),
+            SortGameProductVM = new(sortGameProductState),
+            FilteredGameProductVM = new(new(gameGenres), selectedGenreGameProduct, selectedTitleGameProduct)
+        };
+
+        return View(gameproductsVM);
     }
-    public async Task<IActionResult> PopularGames()
+    public async Task<IActionResult> PopularGames(string searchTitle)
     {
         var carts = await gameShopContext.Carts
             .Include(cart => cart.GameProducts)
@@ -79,6 +83,14 @@ public class HomeController(
             .Take(countPopularGames)
             .ToDictionary( group => group.Key, group => group.First());
 
+        //var games = from game in dictionary
+        //           where game.Value.Title == dictionary.Values.Select(gameProduct => gameProduct.Title).First()
+        //           select game;
+        
+        //if (!string.IsNullOrEmpty(searchTitle))
+        //{
+        //    games.Where(gameProduct => gameProduct.Value.Title.ToUpper().Contains(searchTitle.ToUpper()));
+        //}
         return View(dictionary);
     }
     public IActionResult RecommendationGames() // Эксперты
