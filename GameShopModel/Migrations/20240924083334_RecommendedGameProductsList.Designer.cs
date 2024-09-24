@@ -4,6 +4,7 @@ using GameShopModel.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameShopModel.Migrations
 {
     [DbContext(typeof(GameShopContext))]
-    partial class GameShopContextModelSnapshot : ModelSnapshot
+    [Migration("20240924083334_RecommendedGameProductsList")]
+    partial class RecommendedGameProductsList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,6 +101,9 @@ namespace GameShopModel.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("RecommendedGameProductsId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RecommendedSystemRequirementsId")
                         .HasColumnType("int");
 
@@ -111,6 +117,8 @@ namespace GameShopModel.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MinimumSystemRequirementsId");
+
+                    b.HasIndex("RecommendedGameProductsId");
 
                     b.HasIndex("RecommendedSystemRequirementsId");
 
@@ -218,12 +226,7 @@ namespace GameShopModel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GameProductId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("GameProductId");
 
                     b.ToTable("RecommendedGameProducts");
                 });
@@ -579,6 +582,10 @@ namespace GameShopModel.Migrations
                         .WithMany()
                         .HasForeignKey("MinimumSystemRequirementsId");
 
+                    b.HasOne("GameShopModel.Entities.RecommendedGameProducts", null)
+                        .WithMany("GameProducts")
+                        .HasForeignKey("RecommendedGameProductsId");
+
                     b.HasOne("GameShopModel.Entities.RecommendedSystemRequirement", "RecommendedSystemRequirements")
                         .WithMany()
                         .HasForeignKey("RecommendedSystemRequirementsId");
@@ -593,17 +600,6 @@ namespace GameShopModel.Migrations
                     b.HasOne("GameShopModel.Entities.GameProduct", null)
                         .WithMany("Images")
                         .HasForeignKey("GameProductId");
-                });
-
-            modelBuilder.Entity("GameShopModel.Entities.RecommendedGameProducts", b =>
-                {
-                    b.HasOne("GameShopModel.Entities.GameProduct", "GameProduct")
-                        .WithMany()
-                        .HasForeignKey("GameProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GameProduct");
                 });
 
             modelBuilder.Entity("GameShopModel.Entities.Video", b =>
@@ -688,6 +684,11 @@ namespace GameShopModel.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Videos");
+                });
+
+            modelBuilder.Entity("GameShopModel.Entities.RecommendedGameProducts", b =>
+                {
+                    b.Navigation("GameProducts");
                 });
 #pragma warning restore 612, 618
         }

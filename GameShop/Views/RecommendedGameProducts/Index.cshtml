@@ -1,0 +1,55 @@
+﻿@model IEnumerable<GameShopModel.Entities.RecommendedGameProducts>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container mt-2">
+<h2>Рекомендации </h2>
+<div class="row row-cols-4">
+
+<p>
+    <a asp-action="Create">Создание Новой записи</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Имя Эсперта
+            </th>
+            <th>
+                Фамилия Эксперта
+            </th>
+            <th>
+                Название Игры
+            </th>
+            <th>
+                Описание Игры
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpertName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpertSurname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameProduct.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameProduct.Description)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>
+</div>

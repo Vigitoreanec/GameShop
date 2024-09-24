@@ -93,9 +93,14 @@ public class HomeController(
         //}
         return View(dictionary);
     }
-    public IActionResult RecommendationGames() // Эксперты
+    public async Task<IActionResult> RecommendationGames() // Эксперты
     {
-        return View();
+        //var idUser = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        
+        var recommendedGameProducts = await gameShopContext.RecommendedGameProducts
+            .Include(recommendedGameProducts => recommendedGameProducts.GameProduct)
+            .ToListAsync();
+        return View(recommendedGameProducts);
     }
     public async Task<IActionResult> WishList()
     {

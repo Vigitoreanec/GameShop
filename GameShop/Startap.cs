@@ -7,6 +7,8 @@ using GameShop.Repository;
 using Microsoft.AspNetCore.Identity;
 using GameShopModel.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using GameShop.Repository.Repositories.Interfaces;
+using GameShop.Repository.Repositories;
 
 namespace GameShop;
 
@@ -14,6 +16,7 @@ public class Startap(IConfiguration configuration)
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddTransient<IRecommendedGameProduct, RecommendedGameProduct>();
         services.AddTransient<IGameProductRepository, GameProductRepository>();
         services.AddTransient<IRepositoryWishList, RepositoryWishList>();
         services.AddSingleton<IRepositoryCart, RepositoryCart>();

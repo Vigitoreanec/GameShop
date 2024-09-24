@@ -4,7 +4,7 @@
 @using GameShop.ViewModel;
 
 @model GameProductsViewModel
-<style>
+@* <style>
     @@font-face{
         font-family: 'FontAwesome';
         src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0');
@@ -31,7 +31,7 @@
     .glyphicon-chevron-left::before {
         content: "\f053";
     }
-</style>
+</style> *@
 
 <div class="container mt-2">
     <form asp-controller="Home" asp-action="Index" method="get">
@@ -98,9 +98,68 @@
         </a>
         </div>
     }
+
+    @{
+            const string Disabled = "disabled";
+            const string Active = "active";
+            string isDisabledPreviousPage = string.Empty;
+            if (!Model.GameProducts.HasPreviousPage)
+            {
+                isDisabledPreviousPage = Disabled;
+            }
+            string isDisabledNextPage = string.Empty;
+            if (!Model.GameProducts.HasNextPage)
+            {
+                isDisabledNextPage = Disabled;
+            }
+    }
 </div>
 
-@if (Model.GameProducts.HasPreviousPage)
+    <nav class="pagination-index">
+        <ul class="pagination">
+            <li class="page-item @isDisabledPreviousPage">
+                <a asp-action="Index"
+                   asp-route-page="@(Model.GameProducts.PageIndex - 1)"
+                   asp-route-selectedGenreGameProduct="@(Model.FilteredGameProductVM.SelectedGenreGameProduct)"
+                   asp-route-sortGameProductState="@(Model.SortGameProductVM.SortTitleGameProduct)"
+                   asp-route-selectedTitleGameProduct="@(Model.FilteredGameProductVM.SelectedTitleGameProduct)" 
+                   class="page-link" 
+                   
+                   aria-disabled="@Model.GameProducts.HasPreviousPage">Назад</a>
+            </li>
+            @for (int indexPage = 1; indexPage <= Model.GameProducts.TotalPages; indexPage++)
+            {
+                string isActive = string.Empty;
+
+                @if(indexPage == Model.GameProducts.PageIndex)
+                {
+                    isActive = Active;
+                }
+
+                <li class="page-item @isActive">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@indexPage"
+                       asp-route-selectedGenreGameProduct="@(Model.FilteredGameProductVM.SelectedGenreGameProduct)"
+                       asp-route-sortGameProductState="@(Model.SortGameProductVM.SortTitleGameProduct)"
+                       asp-route-selectedTitleGameProduct="@(Model.FilteredGameProductVM.SelectedTitleGameProduct)"
+                       class="page-link">
+                       @indexPage</a>
+                </li>
+                
+            }
+            
+            <li class="page-item @isDisabledNextPage">
+                <a asp-action="Index"
+                   asp-route-page="@(Model.GameProducts.PageIndex + 1)"
+                   asp-route-sortGameProductState="@(Model.SortGameProductVM.SortTitleGameProduct)"
+                   asp-route-selectedGenreGameProduct="@(Model.FilteredGameProductVM.SelectedGenreGameProduct)"
+                   asp-route-selectedTitleGameProduct="@(Model.FilteredGameProductVM.SelectedTitleGameProduct)" 
+                   class="page-link" aria-disabled="@Model.GameProducts.HasNextPage">Вперед</a>
+            </li>
+        </ul>
+    </nav>
+@* @if (Model.GameProducts.HasPreviousPage)
 {
     <a asp-action="Index"
            asp-route-page="@(Model.GameProducts.PageIndex - 1)"
@@ -123,5 +182,5 @@
         Вперед
         <i class="glyphicon glyphicon-chevron-right"></i>
     </a>
-}
+} *@
 </div>

@@ -15,4 +15,5 @@ public class GameShopContext(DbContextOptions<GameShopContext> options) : Identi
     public DbSet<Video> Videos { get; set; }
     public DbSet<MinimumSystemRequirement> MinimumSystemRequirements { get; set; }
     public DbSet<RecommendedSystemRequirement> RecommendedSystemRequirements { get; set; }
+    public DbSet<RecommendedGameProducts> RecommendedGameProducts { get; set; }
 }
