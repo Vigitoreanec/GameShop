@@ -4,6 +4,9 @@ using GameShopModel.Entities;
 using GameShopModel.Repositories.Interface;
 using GameShop.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using GameShop.ViewModel;
+using GameShopModel.Data;
+using System.Linq;
 
 namespace GameShop.Controllers;
 
@@ -32,21 +35,48 @@ public class RecommendedGameProductsController(IGameProductRepository gameProduc
 
     public async Task<IActionResult> Create()
     {
-        var selectList = new SelectList(await gameProductRepository.GetAllGameProductsAsync());
-        return View(selectList);
+        var recommendedGPViewModel = new RecommendedGameProductViewModel
+        {
+            ExpertName = string.Empty,
+            ExpertSurname = string.Empty,
+            SelectedGameProduct = string.Empty,
+            SearchGameProduct = string.Empty,
+            GameProducts = new SelectList((await gameProductRepository.GetAllAsync()).Select(x => x.Title)),
+        
+        };
+        
+        return View(recommendedGPViewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,ExpertName,ExpertSurname")] RecommendedGameProducts recommendedGameProducts)
+    public async Task<IActionResult> Create(RecommendedGameProductViewModel recommendedGameProductViewModel)
     {
+
         if (ModelState.IsValid)
         {
-            await repositoryRecommendedGameProduct.AddAsync(recommendedGameProducts);
-            
+            var gameProduct = await gameProductRepository.GetByTitleAsync(recommendedGameProductViewModel.SelectedGameProduct);
+            var recommendedGameProduct = new RecommendedGameProducts
+            {
+                ExpertName = recommendedGameProductViewModel.ExpertName,
+                ExpertSurname = recommendedGameProductViewModel.ExpertSurname,
+                //SearchGameProduct
+                GameProduct = gameProduct
+            };
+            await repositoryRecommendedGameProduct.AddAsync(recommendedGameProduct);
             return RedirectToAction(nameof(Index));
+            
         }
-        return View(recommendedGameProducts);
+        var gameProducts = (await gameProductRepository.GetAllAsync()).Select(x => x.Title);
+        if (!string.IsNullOrEmpty(recommendedGameProductViewModel.SearchGameProduct))
+        {
+            gameProducts = gameProducts.Where(gameProduct => gameProduct
+            .ToUpper()
+            .Contains(recommendedGameProductViewModel.SearchGameProduct
+            .ToUpper()));
+        }
+        recommendedGameProductViewModel.GameProducts = new(gameProducts);
+        return View(recommendedGameProductViewModel);
     }
 
     // GET: RecommendedGameProducts/Edit/5

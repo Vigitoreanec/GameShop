@@ -1,4 +1,4 @@
-﻿@model GameShopModel.Entities.RecommendedGameProducts
+﻿@model GameShop.ViewModel.RecommendedGameProductViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 
@@ -26,22 +26,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ExpertName" class="control-label"></label>
-                <input asp-for="ExpertName" class="form-control" />
-                <span asp-validation-for="ExpertName" class="text-danger"></span>
+                    <input asp-for="ExpertName" class="form-control" />
+                    <span asp-validation-for="ExpertName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ExpertSurname" class="control-label"></label>
-                <input asp-for="ExpertSurname" class="form-control" />
-                <span asp-validation-for="ExpertSurname" class="text-danger"></span>
+                    <label asp-for="ExpertSurname" class="control-label"></label>
+                    <input asp-for="ExpertSurname" class="form-control" />
+                    <span asp-validation-for="ExpertSurname" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <select name="selectedGenreGameProduct"
-                        asp-for="FilteredGameProductVM.SelectedGenreGameProduct"
-                        value="FilteredGameProductVM.SelectedGenreGameProduct"
-                        asp-items="Model.FilteredGameProductVM.GameProducts">
-                    <option value="">Все</option>
+                    <label class="control-label">"Название"</label>
+            <div class="form-group d-flex-wrap">
+                    <div class="form-group">
+                        <input asp-for="SearchGameProduct" type="text" />
+                        <input type="submit" value="поиск" />
+                    </div>
+                    <select 
+                        asp-for="SelectedGameProduct"
+                        asp-items="Model.GameProducts">
+                    <option value="">Выберите игру</option>
+                    <span asp-validation-for="SelectedGameProduct" class="text-danger"></span>
                 </select>
-            </div> *@
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

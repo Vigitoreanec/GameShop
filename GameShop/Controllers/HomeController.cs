@@ -13,7 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 
 namespace GameShop.Controllers;
-
+public record NameSurname(string name, string surname);
 public class HomeController(
     GameShopContext gameShopContext, 
     IGameProductRepository gameProductRepository, 
@@ -93,6 +93,8 @@ public class HomeController(
         //}
         return View(dictionary);
     }
+   
+    
     public async Task<IActionResult> RecommendationGames() // Эксперты
     {
         //var idUser = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -100,7 +102,21 @@ public class HomeController(
         var recommendedGameProducts = await gameShopContext.RecommendedGameProducts
             .Include(recommendedGameProducts => recommendedGameProducts.GameProduct)
             .ToListAsync();
-        return View(recommendedGameProducts);
+
+        var listGameProductByExpert = new Dictionary<NameSurname, List<GameProduct>>();
+        foreach(var product in recommendedGameProducts)
+        {
+            var nameSurname = new NameSurname(product.ExpertName, product.ExpertSurname);
+            if (!listGameProductByExpert.TryGetValue(nameSurname, out List<GameProduct>? value))
+            {
+                listGameProductByExpert.Add(nameSurname, [product.GameProduct]);
+            }
+            else
+            {
+                value.Add(product.GameProduct);
+            }
+        }
+        return View(listGameProductByExpert);
     }
     public async Task<IActionResult> WishList()
     {
@@ -118,7 +134,7 @@ public class HomeController(
     {
         var idUser = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var user = await gameShopContext.Users.FirstAsync(user => user.Id == idUser);
-        var gameProduct = await gameProductRepository.GetGameProductAsync(id);
+        var gameProduct = await gameProductRepository.GetByIdAsync(id);
 
         var wishList = await gameShopContext.WishLists
             .Include(wishLists => wishLists.User)

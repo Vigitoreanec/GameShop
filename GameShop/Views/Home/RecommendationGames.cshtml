@@ -1,7 +1,11 @@
-﻿@using GameShopModel.Entities
+﻿@using GameShop.Controllers
+@using GameShopModel.Entities
 @using GameShop.Extensions
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<RecommendedGameProducts>
+
+@model Dictionary<NameSurname, List<GameProduct>>
+
 <section class="h-100 h-custom" style="background-color: #eee;">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -16,36 +20,42 @@
                                     </a>
                                 </h5>
                                 <hr>
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div>
-                                        <p class="mb-1">Список Игр</p>
-                                    </div>
-                                </div>
+                                
 
-                                @foreach (var recommendedGame in Model)
+                                @foreach (var listGameProductsByExpert in Model)
                                 {
+                                    <div>
+                                        <h5 class="mb-3">
+                                            Эксперт:
+                                        </h5>
+                                        <h3>@listGameProductsByExpert.Key.name @listGameProductsByExpert.Key.surname</h3>
+                                        
+                                    </div>
+                                    @foreach (var gameProduct in listGameProductsByExpert.Value)
+                                    {
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div>
-                                                        <img src="@recommendedGame.GameProduct.PresentationImageUrl"
-                                                             class="img-fluid rounded-3" alt="@recommendedGame.GameProduct.Title" style="max-width: 265px;">
+                                                            <img src="@gameProduct.PresentationImageUrl"
+                                                                 class="img-fluid rounded-3" alt="@gameProduct.Title" style="max-width: 265px;">
                                                     </div>
                                                     <div class="ms-3">
-                                                        <h5>@recommendedGame.GameProduct.Title</h5>
-                                                        <p class="small mb-0">@recommendedGame.GameProduct.Description.Truncate(260)...</p>
+                                                            <h5>@gameProduct.Title</h5>
+                                                            <p class="small mb-0">@gameProduct.Description.Truncate(260)...</p>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div style="width: 90px; ">
-                                                        <h5 class="mb-0">@recommendedGame.GameProduct.Price р</h5>
+                                                            <h5 class="mb-0">@gameProduct.Price р</h5>
                                                     </div>
-                                                    <a asp-controller="Game" asp-action="Details" asp-route-id="@recommendedGame.GameProduct.Id" type="button" class="btn btn-danger">Купить</a>
+                                                        <a asp-controller="Game" asp-action="Details" asp-route-id="@gameProduct.Id" type="button" class="btn btn-danger">Купить</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    }
                                 }
                             </div>
 

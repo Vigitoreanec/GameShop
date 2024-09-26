@@ -73,14 +73,14 @@ public class GameController(
             return RedirectToAction("Login", "Account");
         }
 
-        var gameProduct = await gameProductRepository.GetGameProductAsync(id);
+        var gameProduct = await gameProductRepository.GetByIdAsync(id);
         repositoryCart.Add(gameProduct);
 
         return RedirectToAction("Index", "Cart");
     }
     public async Task<IActionResult> Add(int id)
     {
-        var gameProduct = await gameProductRepository.GetGameProductAsync(id);
+        var gameProduct = await gameProductRepository.GetByIdAsync(id);
         repositoryCart.Add(gameProduct);
 
         return RedirectToAction("Index", "Cart");
@@ -102,7 +102,7 @@ public class GameController(
         var idUser = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var user = await gameShopContext.Users.FirstAsync(user => user.Id == idUser);
 
-        var gameProduct = await gameProductRepository.GetGameProductAsync(id);
+        var gameProduct = await gameProductRepository.GetByIdAsync(id);
 
         await repositoryWishList.AddAsync(user,gameProduct);
 
